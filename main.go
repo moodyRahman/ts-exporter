@@ -1,9 +1,14 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"os"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 type TsResponse struct {
@@ -33,12 +38,40 @@ type TsResponse struct {
 }
 
 func main() {
-	resp, err := http.Get("https://google.com")
+	err := godotenv.Load()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	fmt.Println(resp.Body)
+	req, _ := http.NewRequest("GET", "https://api.tailscale.com/api/v2/tailnet/"+os.Getenv("TS_NET")+"/devices", nil)
+	req.Header.Set("Authorization", "Bearer "+os.Getenv("TS_AUTHKEY"))
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	var devices TsResponse
+	body, err := io.ReadAll(resp.Body)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	_ = json.Unmarshal(body, &devices)
+
+	debug_out, err := json.MarshalIndent(devices.Devices[0], "", "	")
+	fmt.Println(string(debug_out))
+
+	if err != nil {
+		fmt.Println(err)
+		fmt.Println(string(body))
+		return
+	}
+
+	// fmt.Println(devices)
 
 }

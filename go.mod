@@ -2,4 +2,4 @@ module ts_exporter
 
 go 1.24.4
 
-require github.com/davecgh/go-spew v1.1.1 // indirect
+require github.com/joho/godotenv v1.5.1
