@@ -38,10 +38,6 @@ type TsResponse struct {
 	} `json:"devices,omitempty"`
 }
 
-func toUnix(t time.Time) int {
-	return int(t.Unix())
-}
-
 func main() {
 	err := godotenv.Load()
 	if err != nil {
@@ -83,9 +79,13 @@ func main() {
 		// }
 		// w.Header().Set("Content-Type", "application/json")
 
-		templ_date := "ts_expiry_date {{`{`}}name=\"{{.Name}}\" {{`}`}} {{.Expires}} \n" +
+		funcMap := template.FuncMap{
+			"toUnix": func(t time.Time) int { return int(t.Unix()) },
+		}
+		templ_date := "ts_expiry_date {{`{`}}name=\"{{.Name}}\" {{`}`}} {{toUnix .Expires}} \n" +
 			"ts_expiry_enabled {{`{`}}name=\"{{.Name}}\" {{`}`}} {{.KeyExpiryDisabled}} \n"
-		t_date, err := template.New("t").Parse(templ_date)
+
+		t_date, err := template.New("t").Funcs(funcMap).Parse(templ_date)
 		if err != nil {
 			fmt.Println(err)
 		}
