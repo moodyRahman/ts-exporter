@@ -1,0 +1,39 @@
+services:
+  ts-exporter:
+    image: ts-exporter:latest
+    container_name: ts-exporter
+    restart: unless-stopped
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+    environment:
+      - TS_ACCESSKEY=$TS_ACCESSKEY
+      - TS_NET=$TS_NET
+
+    # depends_on:
+    #   - tailscale-glance
+    # network_mode: service:tailscale-glance
+
+
+  # tailscale-glance:
+  #   image: tailscale/tailscale:latest
+  #   container_name: tailscale-glance
+  #   hostname: rohan
+  #   environment:
+  #     - TS_AUTHKEY=$TS_AUTHKEY
+  #     - TS_STATE_DIR=/var/lib/tailscale
+  #     - TS_USERSPACE=false
+  #   volumes:
+  #     - ${PWD}/tailscale-nginx/state:/var/lib/tailscale
+  #     - /dev/net/tun:/dev/net/tun
+  #     - ${PWD}/serve_configs:/var/lib/serve_configs
+  #   cap_add:
+  #     - net_admin
+  #     - sys_module
+  #   restart: unless-stopped
+  #   dns:
+  #     - 100.100.100.100
+  #     - 8.8.8.8
+  #     - 100.100.100.100
