@@ -44,36 +44,40 @@ func main() {
 		return
 	}
 
-	req, _ := http.NewRequest("GET", "https://api.tailscale.com/api/v2/tailnet/"+os.Getenv("TS_NET")+"/devices", nil)
-	req.Header.Set("Authorization", "Bearer "+os.Getenv("TS_AUTHKEY"))
+	http.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
 
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+		req, _ := http.NewRequest("GET", "https://api.tailscale.com/api/v2/tailnet/"+os.Getenv("TS_NET")+"/devices", nil)
+		req.Header.Set("Authorization", "Bearer "+os.Getenv("TS_AUTHKEY"))
 
-	var devices TsResponse
-	body, err := io.ReadAll(resp.Body)
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			fmt.Println(err)
+			fmt.Fprintf(w, "internal error")
+			return
+		}
 
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+		var devices TsResponse
+		body, err := io.ReadAll(resp.Body)
 
-	_ = json.Unmarshal(body, &devices)
+		if err != nil {
+			fmt.Println(err)
+			fmt.Fprintf(w, "internal error")
+			return
+		}
 
-	debug_out, err := json.MarshalIndent(devices, "", "	")
-	fmt.Println(string(debug_out))
+		_ = json.Unmarshal(body, &devices)
 
-	if err != nil {
-		fmt.Println(err)
-		fmt.Println(string(body))
-		return
-	}
+		debug_out, err := json.MarshalIndent(devices, "", "	")
+		fmt.Println(string(debug_out))
 
-	http.HandleFunc("/moody", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "gucci gang")
+		if err != nil {
+			fmt.Println(err)
+			fmt.Println(string(body))
+			fmt.Fprintf(w, "internal error")
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprint(w, string(debug_out))
 	})
 
 	http.ListenAndServe("0.0.0.0:5000", nil)
