@@ -67,17 +67,41 @@ func main() {
 
 		_ = json.Unmarshal(body, &devices)
 
-		debug_out, err := json.MarshalIndent(devices, "", "	")
-		fmt.Println(string(debug_out))
+		// debug_out, err := json.MarshalIndent(devices, "", "	")
+		// fmt.Println(string(debug_out))
 
+		// if err != nil {
+		// 	fmt.Println(err)
+		// 	fmt.Println(string(body))
+		// 	fmt.Fprintf(w, "internal error")
+		// 	return
+		// }
+		// w.Header().Set("Content-Type", "application/json")
+
+		templ_date := "ts_expiry_date {{`{`}}name=\"{{.Name}}\" {{`}`}} {{.Expires}} \n" +
+			"ts_expiry_enabled {{`{`}}name=\"{{.Name}}\" {{`}`}} {{.KeyExpiryDisabled}} \n"
+		t_date, err := template.New("t").Parse(templ_date)
 		if err != nil {
 			fmt.Println(err)
-			fmt.Println(string(body))
-			fmt.Fprintf(w, "internal error")
-			return
 		}
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprint(w, string(debug_out))
+
+		for _, device := range devices.Devices {
+			// device_s, _ := json.MarshalIndent(device, "", "  ")
+
+			// fmt.Println(string(device_s))
+			err = t_date.Execute(w, device)
+			if err != nil {
+				fmt.Println(err)
+			}
+			fmt.Fprint(w, "\n")
+			fmt.Fprint(w, "\n")
+
+			// fmt.Fprint(w, "{")
+			// fmt.Fprint(w, device.Name)
+			// fmt.Fprint(w, "}")
+		}
+
+		// fmt.Fprint(w, string(debug_out))
 	})
 
 	http.ListenAndServe("0.0.0.0:5000", nil)
