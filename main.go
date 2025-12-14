@@ -13,28 +13,28 @@ import (
 
 type TsResponse struct {
 	Devices []struct {
-		Addresses                 []string  `json:"addresses"`
-		Authorized                bool      `json:"authorized"`
-		BlocksIncomingConnections bool      `json:"blocksIncomingConnections"`
-		ClientVersion             string    `json:"clientVersion"`
-		ConnectedToControl        bool      `json:"connectedToControl"`
-		Created                   time.Time `json:"created"`
-		Expires                   time.Time `json:"expires"`
-		Hostname                  string    `json:"hostname"`
-		ID                        string    `json:"id"`
-		IsExternal                bool      `json:"isExternal"`
-		KeyExpiryDisabled         bool      `json:"keyExpiryDisabled"`
-		LastSeen                  time.Time `json:"lastSeen"`
-		MachineKey                string    `json:"machineKey"`
-		Name                      string    `json:"name"`
-		NodeID                    string    `json:"nodeId"`
-		NodeKey                   string    `json:"nodeKey"`
-		Os                        string    `json:"os"`
-		TailnetLockError          string    `json:"tailnetLockError"`
-		TailnetLockKey            string    `json:"tailnetLockKey"`
-		UpdateAvailable           bool      `json:"updateAvailable"`
-		User                      string    `json:"user"`
-	} `json:"devices"`
+		// Addresses                 []string  `json:"addresses,omitempty"`
+		// Authorized                bool      `json:"authorized,omitempty"`
+		// BlocksIncomingConnections bool      `json:"blocksIncomingConnections,omitempty"`
+		// ClientVersion             string    `json:"clientVersion,omitempty"`
+		// ConnectedToControl        bool      `json:"connectedToControl,omitempty"`
+		// Created                   time.Time `json:"created,omitempty"`
+		Expires time.Time `json:"expires,omitempty"`
+		// Hostname                  string    `json:"hostname,omitempty"`
+		// ID                        string    `json:"id,omitempty"`
+		// IsExternal                bool      `json:"isExternal,omitempty"`
+		// KeyExpiryDisabled         bool      `json:"keyExpiryDisabled,omitempty"`
+		LastSeen time.Time `json:"lastSeen,omitempty"`
+		// MachineKey                string    `json:"machineKey,omitempty"`
+		Name string `json:"name,omitempty"`
+		// NodeID                    string    `json:"nodeId,omitempty"`
+		// NodeKey                   string    `json:"nodeKey,omitempty"`
+		// Os                        string    `json:"os,omitempty"`
+		// TailnetLockError          string    `json:"tailnetLockError,omitempty"`
+		// TailnetLockKey            string    `json:"tailnetLockKey,omitempty"`
+		// UpdateAvailable           bool      `json:"updateAvailable,omitempty"`
+		// User                      string    `json:"user,omitempty"`
+	} `json:"devices,omitempty"`
 }
 
 func main() {
@@ -63,7 +63,7 @@ func main() {
 
 	_ = json.Unmarshal(body, &devices)
 
-	debug_out, err := json.MarshalIndent(devices.Devices[0], "", "	")
+	debug_out, err := json.MarshalIndent(devices, "", "	")
 	fmt.Println(string(debug_out))
 
 	if err != nil {
@@ -71,6 +71,12 @@ func main() {
 		fmt.Println(string(body))
 		return
 	}
+
+	http.HandleFunc("/moody", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "gucci gang")
+	})
+
+	http.ListenAndServe("0.0.0.0:5000", nil)
 
 	// fmt.Println(devices)
 
