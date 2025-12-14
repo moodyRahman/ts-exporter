@@ -92,9 +92,16 @@ func main() {
 
 		funcMap := template.FuncMap{
 			"toUnix": func(t time.Time) int { return int(t.Unix()) },
+			"boolToInt": func(x bool) int {
+				if (x) {
+					return 1
+				}
+				return 0
+			},
 		}
-		templ_date := "ts_expiry_date {{`{`}}name=\"{{.Name}}\" {{`}`}} {{toUnix .Expires}} \n" +
-			"ts_expiry_enabled {{`{`}}name=\"{{.Name}}\" {{`}`}} {{.KeyExpiryDisabled}} \n"
+
+		templ_date := "ts_expiry_date {{`{`}}name=\"{{.Name}}\"{{`}`}} {{toUnix .Expires}} \n" +
+			"ts_expiry_enabled {{`{`}}name=\"{{.Name}}\"{{`}`}} {{boolToInt .KeyExpiryDisabled}}"
 
 		t_date, err := template.New("t").Funcs(funcMap).Parse(templ_date)
 		if err != nil {
@@ -113,7 +120,6 @@ func main() {
 			if err != nil {
 				fmt.Println(err)
 			}
-			fmt.Fprint(w, "\n")
 			fmt.Fprint(w, "\n")
 
 			// fmt.Fprint(w, "{")
