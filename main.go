@@ -42,13 +42,15 @@ func main() {
 	err := godotenv.Load()
 	if err != nil {
 		fmt.Println(err)
-		return
+		fmt.Println("using injected env variables")
 	}
+
+	// fmt.Println("https://api.tailscale.com/api/v2/tailnet/"+os.Getenv("TS_NET")+"/devices")
 
 	http.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
 
 		req, _ := http.NewRequest("GET", "https://api.tailscale.com/api/v2/tailnet/"+os.Getenv("TS_NET")+"/devices", nil)
-		req.Header.Set("Authorization", "Bearer "+os.Getenv("TS_AUTHKEY"))
+		req.Header.Set("Authorization", "Bearer "+os.Getenv("TS_ACCESSKEY"))
 
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
@@ -66,7 +68,16 @@ func main() {
 			return
 		}
 
-		_ = json.Unmarshal(body, &devices)
+		// fmt.Println("here")
+		// fmt.Println(string(body))
+
+		err = json.Unmarshal(body, &devices)
+
+		if err != nil {
+			fmt.Println(err)
+			fmt.Fprintf(w, "internal error")
+			return
+		}
 
 		// debug_out, err := json.MarshalIndent(devices, "", "	")
 		// fmt.Println(string(debug_out))
@@ -90,10 +101,14 @@ func main() {
 			fmt.Println(err)
 		}
 
+		// fmt.Println(len(devices.Devices))
+
 		for _, device := range devices.Devices {
+			// fmt.Println(device.Name)
 			// device_s, _ := json.MarshalIndent(device, "", "  ")
 
 			// fmt.Println(string(device_s))
+
 			err = t_date.Execute(w, device)
 			if err != nil {
 				fmt.Println(err)
