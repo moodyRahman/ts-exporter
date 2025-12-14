@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"text/template"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -23,8 +24,8 @@ type TsResponse struct {
 		// Hostname                  string    `json:"hostname,omitempty"`
 		// ID                        string    `json:"id,omitempty"`
 		// IsExternal                bool      `json:"isExternal,omitempty"`
-		// KeyExpiryDisabled         bool      `json:"keyExpiryDisabled,omitempty"`
-		LastSeen time.Time `json:"lastSeen,omitempty"`
+		KeyExpiryDisabled bool      `json:"keyExpiryDisabled"`
+		LastSeen          time.Time `json:"lastSeen,omitempty"`
 		// MachineKey                string    `json:"machineKey,omitempty"`
 		Name string `json:"name,omitempty"`
 		// NodeID                    string    `json:"nodeId,omitempty"`
@@ -35,6 +36,10 @@ type TsResponse struct {
 		// UpdateAvailable           bool      `json:"updateAvailable,omitempty"`
 		// User                      string    `json:"user,omitempty"`
 	} `json:"devices,omitempty"`
+}
+
+func toUnix(t time.Time) int {
+	return int(t.Unix())
 }
 
 func main() {
