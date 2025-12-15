@@ -48,8 +48,6 @@ func main() {
 		fmt.Println("using injected env variables")
 	}
 
-	// fmt.Println("https://api.tailscale.com/api/v2/tailnet/"+os.Getenv("TS_NET")+"/devices")
-
 	http.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("got a request")
 		fmt.Println(lastFetched)
@@ -78,9 +76,6 @@ func main() {
 				return
 			}
 
-			// fmt.Println("here")
-			// fmt.Println(string(body))
-
 			err = json.Unmarshal(body, &devices)
 			cache = devices
 			if err != nil {
@@ -89,19 +84,6 @@ func main() {
 				return
 			}
 		}
-
-		// var devices TsResponse
-
-		// debug_out, err := json.MarshalIndent(devices, "", "	")
-		// fmt.Println(string(debug_out))
-
-		// if err != nil {
-		// 	fmt.Println(err)
-		// 	fmt.Println(string(body))
-		// 	fmt.Fprintf(w, "internal error")
-		// 	return
-		// }
-		// w.Header().Set("Content-Type", "application/json")
 
 		funcMap := template.FuncMap{
 			"toUnix": func(t time.Time) int { return int(t.Unix()) },
@@ -121,26 +103,13 @@ func main() {
 			fmt.Println(err)
 		}
 
-		// fmt.Println(len(devices.Devices))
-
 		for _, device := range devices.Devices {
-			// fmt.Println(device.Name)
-			// device_s, _ := json.MarshalIndent(device, "", "  ")
-
-			// fmt.Println(string(device_s))
-
 			err = t_date.Execute(w, device)
 			if err != nil {
 				fmt.Println(err)
 			}
 			fmt.Fprint(w, "\n")
-
-			// fmt.Fprint(w, "{")
-			// fmt.Fprint(w, device.Name)
-			// fmt.Fprint(w, "}")
 		}
-
-		// fmt.Fprint(w, string(debug_out))
 	})
 
 	http.ListenAndServe("0.0.0.0:5000", nil)
