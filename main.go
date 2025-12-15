@@ -38,6 +38,9 @@ type TsResponse struct {
 	} `json:"devices,omitempty"`
 }
 
+var lastFetched time.Time
+var cache TsResponse
+
 func main() {
 	err := godotenv.Load()
 	if err != nil {
@@ -48,36 +51,46 @@ func main() {
 	// fmt.Println("https://api.tailscale.com/api/v2/tailnet/"+os.Getenv("TS_NET")+"/devices")
 
 	http.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
-
-		req, _ := http.NewRequest("GET", "https://api.tailscale.com/api/v2/tailnet/"+os.Getenv("TS_NET")+"/devices", nil)
-		req.Header.Set("Authorization", "Bearer "+os.Getenv("TS_ACCESSKEY"))
-
-		resp, err := http.DefaultClient.Do(req)
-		if err != nil {
-			fmt.Println(err)
-			fmt.Fprintf(w, "internal error")
-			return
-		}
+		fmt.Println("got a request")
+		fmt.Println(lastFetched)
 
 		var devices TsResponse
-		body, err := io.ReadAll(resp.Body)
 
-		if err != nil {
-			fmt.Println(err)
-			fmt.Fprintf(w, "internal error")
-			return
+		if time.Since(lastFetched) < 24*time.Hour {
+			fmt.Println("using the cache")
+			devices = cache
+		} else {
+			fmt.Println("fresh fetch")
+			lastFetched = time.Now()
+			req, _ := http.NewRequest("GET", "https://api.tailscale.com/api/v2/tailnet/"+os.Getenv("TS_NET")+"/devices", nil)
+			req.Header.Set("Authorization", "Bearer "+os.Getenv("TS_ACCESSKEY"))
+
+			resp, err := http.DefaultClient.Do(req)
+			if err != nil {
+				fmt.Println(err)
+				fmt.Fprintf(w, "internal error")
+				return
+			}
+			body, err := io.ReadAll(resp.Body)
+			if err != nil {
+				fmt.Println(err)
+				fmt.Fprintf(w, "internal error")
+				return
+			}
+
+			// fmt.Println("here")
+			// fmt.Println(string(body))
+
+			err = json.Unmarshal(body, &devices)
+			cache = devices
+			if err != nil {
+				fmt.Println(err)
+				fmt.Fprintf(w, "internal error")
+				return
+			}
 		}
 
-		// fmt.Println("here")
-		// fmt.Println(string(body))
-
-		err = json.Unmarshal(body, &devices)
-
-		if err != nil {
-			fmt.Println(err)
-			fmt.Fprintf(w, "internal error")
-			return
-		}
+		// var devices TsResponse
 
 		// debug_out, err := json.MarshalIndent(devices, "", "	")
 		// fmt.Println(string(debug_out))
@@ -93,7 +106,7 @@ func main() {
 		funcMap := template.FuncMap{
 			"toUnix": func(t time.Time) int { return int(t.Unix()) },
 			"boolToInt": func(x bool) int {
-				if (x) {
+				if x {
 					return 1
 				}
 				return 0
