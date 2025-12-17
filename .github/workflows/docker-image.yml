@@ -40,3 +40,8 @@ jobs:
         # logout: # optional, default is true
         # Raw authentication to registries, defined as YAML objects
         # registry-auth: # optional
+        
+    - name: Push image to registry
+      run: |
+        ls
+        docker image ls
