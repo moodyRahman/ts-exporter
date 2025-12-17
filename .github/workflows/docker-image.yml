@@ -44,4 +44,4 @@ jobs:
     - name: Push image to registry
       run: |
         ls
-        docker image push bucciarati.tail5b1a8.ts.net/moody:latest
+        docker image push bucciarati.tail5b1a8.ts.net/ts-exporter:$(git rev-parse --short HEAD)
