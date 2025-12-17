@@ -11,14 +11,14 @@ on:
 jobs:
 
   build:
-
+    name: build and push image
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
 
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(git rev-parse --short HEAD)
+      run: docker build . --file Dockerfile --tag ts-exporter:$(git rev-parse --short HEAD)
 
     - name: Connect Tailscale
       uses: tailscale/github-action@v2
