@@ -31,9 +31,9 @@ jobs:
         # Server address of Docker registry. If not set then will default to Docker Hub
         registry: bucciarati.tail5b1a8.ts.net
         # Username used to log against the Docker registry
-        # username: # optional
+        username: moody
         # Password or personal access token used to log against the Docker registry
-        # password: # optional
+        password: ${{ REGISTRY_PASSWORD }}
         # Specifies whether the given registry is ECR (auto, true or false)
         # ecr: # optional
         # Log out from the Docker registry at the end of a job
