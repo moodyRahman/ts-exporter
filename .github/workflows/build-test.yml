@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: build and push image
+    name: build image and dummy test
     runs-on: ubuntu-latest
 
     steps:
