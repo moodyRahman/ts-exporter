@@ -1,15 +1,12 @@
-name: Docker Image CI
+name: Build image and run tests
 
 on:
-  push:
-    branches: [ "main" ]
+  # push:
+  #   branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
-
-
 jobs:
-
   build:
     name: build and push image
     runs-on: ubuntu-latest
@@ -17,8 +14,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: git status
+      run: |
+        git log -1 | cat
+
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ts-exporter:$(git rev-parse --short HEAD)
+      run: docker build . --file Dockerfile --tag bucciarati.tail5b1a8.ts.net/ts-exporter:$(git rev-parse --short HEAD) --tag ts-exporter:$(git rev-parse --short HEAD)
 
     - name: Connect Tailscale
       uses: tailscale/github-action@v2
@@ -46,4 +47,4 @@ jobs:
     - name: Push image to registry
       run: |
         ls
-        docker image ls
+        docker image push bucciarati.tail5b1a8.ts.net/ts-exporter:$(git rev-parse --short HEAD)
