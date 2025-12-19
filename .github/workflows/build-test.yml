@@ -21,15 +21,27 @@ jobs:
     - name: testing
       run: echo "testing..."
 
-    # - name: Build the Docker image
-    #   run: docker build . --file Dockerfile --tag bucciarati.tail5b1a8.ts.net/ts-exporter:$(git rev-parse --short HEAD) --tag ts-exporter:$(git rev-parse --short HEAD)
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag bucciarati.tail5b1a8.ts.net/ts-exporter:$(git rev-parse --short HEAD) --tag ts-exporter:$(git rev-parse --short HEAD)
 
-    # - name: Connect Tailscale
-    #   uses: tailscale/github-action@v2
-    #   with:
-    #     # Your Tailscale authentication key, from the admin panel.
-    #     authkey: ${{ secrets.TS_AUTHKEY }}
-    #     hostname: temp-runner
+    - name: Connect Tailscale
+      uses: tailscale/github-action@v2
+      with:
+        # Your Tailscale authentication key, from the admin panel.
+        authkey: ${{ secrets.TS_AUTHKEY }}
+        hostname: temp-runner
+
+    - name: run docker compose
+      env:
+        TS_ACCESSKEY: ${{secrets.TS_ACCESSKEY}}
+        TS_NET: ${{secrets.TS_NET}}
+      run: | 
+        docker compose up -d
+        
+    - name: test server
+      run: |
+        curl -f --retry 4 --retry-delay 2 --retry-all-errors http://localhost:5000
+    
 
     # - name: Docker Login
     #   uses: docker/login-action@v3.6.0
