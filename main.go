@@ -48,6 +48,10 @@ func main() {
 		fmt.Println("using injected env variables")
 	}
 
+	http.HandleFunc("/debug", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "look at me.... i be debugging")
+	})
+
 	http.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("got a request")
 		fmt.Println(lastFetched)
