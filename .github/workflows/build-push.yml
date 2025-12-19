@@ -1,6 +1,5 @@
 name: Build image and publish
 
-
 on:
   push:
     branches: [ "main" ]
