@@ -40,7 +40,7 @@ jobs:
         
     - name: test server
       run: |
-        curl -f --retry 4 --retry-delay 2 --retry-all-errors http://localhost:5000
+        curl -f --retry 4 --retry-delay 2 --retry-all-errors http://localhost:5000/debug
     
 
     # - name: Docker Login
