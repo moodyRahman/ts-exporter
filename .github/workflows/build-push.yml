@@ -56,5 +56,5 @@ jobs:
     
     - name: SSH into server
       run: |
-        ssh -o StrictHostKeyChecking=no moody@foofighters "ls ~/le_docks"
+        ssh -o StrictHostKeyChecking=no moody@foofighters "cd ~/le_docks/ts-exporter; docker compose pull; docker compose restart"
 
