@@ -41,6 +41,15 @@ jobs:
     - name: test server
       run: |
         curl -f --retry 4 --retry-delay 2 --retry-all-errors http://localhost:5000/debug
+
+    - name: test env vars
+      run: |
+        export $TS_EXPORTER_LATEST=$(git rev-parse --short HEAD)
+
+
+    - name: test env vars
+      run: |
+        echo $TS_EXPORTER_LATEST
     
 
     # - name: Docker Login
