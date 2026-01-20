@@ -12,13 +12,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: git status
-      run: |
-        git log -1 | cat
-
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag bucciarati.tail5b1a8.ts.net/ts-exporter:$(git rev-parse --short HEAD) --tag ts-exporter:$(git rev-parse --short HEAD)
-
     - name: Connect Tailscale
       uses: tailscale/github-action@v2
       with:
@@ -40,9 +33,29 @@ jobs:
         # Log out from the Docker registry at the end of a job
         # logout: # optional, default is true
         # Raw authentication to registries, defined as YAML objects
-        # registry-auth: # optional
+        # registry-auth: # optional        
+
+
+    - name: Build the Docker image
+      run: | 
+        docker build . --file Dockerfile \ 
+        --tag bucciarati.tail5b1a8.ts.net/ts-exporter:$(git rev-parse --short HEAD) \
+        --tag bucciarati.tail5b1a8.ts.net/ts-exporter:main \
+        --tag ts-exporter:$(git rev-parse --short HEAD)
 
     - name: Push image to registry
       run: |
         ls
         docker image push bucciarati.tail5b1a8.ts.net/ts-exporter:$(git rev-parse --short HEAD)
+        docker image push bucciarati.tail5b1a8.ts.net/ts-exporter:main
+
+
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.FF_SSH_KEY }}
+    
+    - name: SSH into server
+      run: |
+        ssh -o StrictHostKeyChecking=no moody@foofighters "ls ~/le_docks"
+
