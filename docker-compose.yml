@@ -1,6 +1,6 @@
 services:
   ts-exporter:
-    image: ts-exporter:$TS_EXPORTER_LATEST
+    image: ts-exporter:main
     container_name: ts-exporter
     restart: unless-stopped
     build: 
