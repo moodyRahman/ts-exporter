@@ -33,12 +33,11 @@ jobs:
         # Log out from the Docker registry at the end of a job
         # logout: # optional, default is true
         # Raw authentication to registries, defined as YAML objects
-        # registry-auth: # optional        
-
+        # registry-auth: # optional
 
     - name: Build the Docker image
       run: | 
-        docker build . --file Dockerfile \ 
+        docker build . --file Dockerfile \
         --tag bucciarati.tail5b1a8.ts.net/ts-exporter:$(git rev-parse --short HEAD) \
         --tag bucciarati.tail5b1a8.ts.net/ts-exporter:main \
         --tag ts-exporter:$(git rev-parse --short HEAD)
