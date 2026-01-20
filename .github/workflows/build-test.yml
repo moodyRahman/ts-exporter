@@ -44,7 +44,7 @@ jobs:
 
     - name: test env vars
       run: |
-        export $TS_EXPORTER_LATEST=$(git rev-parse --short HEAD)
+        export TS_EXPORTER_LATEST=$(git rev-parse --short HEAD)
 
 
     - name: test env vars
