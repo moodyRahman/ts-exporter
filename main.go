@@ -49,7 +49,7 @@ func main() {
 	}
 
 	http.HandleFunc("/debug", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "look at me.... i be debugging")
+		fmt.Fprintf(w, "look at me.... my name be moody.....")
 	})
 
 	http.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
