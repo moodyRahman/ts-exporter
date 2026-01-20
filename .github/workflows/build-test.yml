@@ -49,6 +49,7 @@ jobs:
 
     - name: test env vars
       run: |
+        echo lalala
         echo $TS_EXPORTER_LATEST
     
 
