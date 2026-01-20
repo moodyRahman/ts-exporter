@@ -1,8 +1,11 @@
 services:
   ts-exporter:
-    image: bucciarati.tail5b1a8.ts.net/ts-exporter:main
+    image: ts-exporter:main
     container_name: ts-exporter
     restart: unless-stopped
+    build: 
+      context: .
+      dockerfile: Dockerfile
     ports:
       - 5000:5000
     environment:
