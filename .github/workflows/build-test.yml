@@ -42,10 +42,8 @@ jobs:
       run: |
         curl -f --retry 4 --retry-delay 2 --retry-all-errors http://localhost:5000/debug
 
-    - name: test env vars
-      run: |
-        export TS_EXPORTER_LATEST=$(git rev-parse --short HEAD)
-
+    - name: Set version
+      run: echo "TS_EXPORTER_LATEST=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
     - name: test env vars
       run: |
