@@ -58,7 +58,7 @@ func main() {
 
 		var devices TsResponse
 
-		if time.Since(lastFetched) < 24*time.Hour {
+		if time.Since(lastFetched) < 24*time.Hour && len(cache.Devices) > 0 {
 			fmt.Println("using the cache")
 			devices = cache
 		} else {
