@@ -21,7 +21,7 @@ jobs:
       run: docker build . --file Dockerfile --tag bucciarati.tail5b1a8.ts.net/ts-exporter:$TS_EXPORTER_LATEST --tag ts-exporter:$TS_EXPORTER_LATEST
 
     - name: Connect Tailscale
-      uses: tailscale/github-action@v2
+      uses: tailscale/github-action@v4
       with:
         # Your Tailscale authentication key, from the admin panel.
         authkey: ${{ secrets.TS_AUTHKEY }}
