@@ -24,7 +24,7 @@ jobs:
       uses: tailscale/github-action@v4
       with:
         # Your Tailscale authentication key, from the admin panel.
-        authkey: ${{ secrets.TS_AUTHKEY }}
+        authkey: testvestfdgfd
         hostname: temp-runner
 
     - name: run docker compose
